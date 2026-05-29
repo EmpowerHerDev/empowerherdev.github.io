@@ -184,6 +184,21 @@
   });
 
   /**
+   * Auto-calculate age from birth date (about page)
+   */
+  const ageEl = document.getElementById('age');
+  if (ageEl && ageEl.dataset.birth) {
+    const birth = new Date(ageEl.dataset.birth);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const hasBirthdayPassed =
+      today.getMonth() > birth.getMonth() ||
+      (today.getMonth() === birth.getMonth() && today.getDate() >= birth.getDate());
+    if (!hasBirthdayPassed) age--;
+    ageEl.textContent = age;
+  }
+
+  /**
    * Contact form (Web3Forms): AJAX submit, clear fields on success
    */
   const contactForm = document.querySelector('.contact .php-email-form');
