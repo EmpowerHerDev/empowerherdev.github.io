@@ -183,4 +183,61 @@
 
   });
 
+  /**
+   * Contact form (Web3Forms): AJAX submit, clear fields on success
+   */
+  const contactForm = document.querySelector('.contact .php-email-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const form = this;
+      const loading = form.querySelector('.loading');
+      const errorMessage = form.querySelector('.error-message');
+      const sentMessage = form.querySelector('.sent-message');
+      const submitBtn = form.querySelector('button[type="submit"]');
+
+      const showSubmitBtn = (show) => {
+        if (submitBtn) submitBtn.style.display = show ? '' : 'none';
+      };
+
+      // 送信中: ボタンを隠して「送信中...」を表示
+      showSubmitBtn(false);
+      if (loading) loading.style.display = 'block';
+      if (errorMessage) {
+        errorMessage.style.display = 'none';
+        errorMessage.textContent = '';
+      }
+      if (sentMessage) sentMessage.style.display = 'none';
+
+      fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form)
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (loading) loading.style.display = 'none';
+
+          if (data.success) {
+            form.reset();
+            if (sentMessage) sentMessage.style.display = 'block';
+          } else {
+            showSubmitBtn(true);
+            if (errorMessage) {
+              errorMessage.textContent = data.message || '送信に失敗しました。もう一度お試しください。';
+              errorMessage.style.display = 'block';
+            }
+          }
+        })
+        .catch(() => {
+          if (loading) loading.style.display = 'none';
+          showSubmitBtn(true);
+          if (errorMessage) {
+            errorMessage.textContent = '送信に失敗しました。もう一度お試しください。';
+            errorMessage.style.display = 'block';
+          }
+        });
+    });
+  }
+
 })();
